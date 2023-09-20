@@ -19,6 +19,7 @@ export async function createCompletion(message: string, system :string = "You ar
         messages: [
             {
               role: "system",
+
               content: system ,
             },
             {
@@ -30,3 +31,52 @@ export async function createCompletion(message: string, system :string = "You ar
     const response = await openai.chat.completions.create(opt);
     return response.choices[0].message;
 }
+
+export async function createEmbedding(filePath: string) {
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const chunks = splitIntoChunks(fileContent, 15200); // Adjust character limit according to your need
+
+  const embeddings: any[] = [];
+
+  for (const chunk of chunks) {
+    const apiResponse = await openai.embeddings.create({
+      input: chunk,
+      model: 'text-embedding-ada-002',
+    });
+    console.log(apiResponse.data);
+    const embedding = apiResponse.data; // Extract embedding from the response
+    embeddings.push(embedding[0].embedding);
+  }
+  //write to filepath.embedding.json
+  fs.writeFileSync(filePath + ".embedding.json", JSON.stringify(embeddings));
+  // Now `embeddings` contains all the embeddings for each chunk
+  // You can process this array further or store it somewhere
+}
+
+  function splitIntoChunks(text: string, approxCharPerChunk: number): string[] {
+    const chunks: string[] = [];
+    let start = 0;
+    let end = approxCharPerChunk;
+  
+    while (start < text.length) {
+      if (end >= text.length) {
+        end = text.length;
+      } else {
+        // Try to split by the nearest whitespace to avoid cutting words
+        while (end < text.length && text[end] !== ' ') {
+          end++;
+        }
+      }
+  
+      const chunk = text.slice(start, end);
+      chunks.push(chunk);
+
+      // Update start and end for the next iteration
+      start = end;
+      end = start + approxCharPerChunk;
+
+    }
+
+  
+    return chunks;
+  }

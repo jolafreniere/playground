@@ -3,6 +3,7 @@ import * as fs from "fs";
 
 import * as dotenv from 'dotenv';
 import { DirectoryTree, generateProjectMetadata } from "./MetadataGenerator";
+import { createEmbedding } from "./openai/openAIService";
 
 dotenv.config();
 
@@ -58,10 +59,10 @@ async function main(){
     
     // let data =await generateProjectMetadata("C:\\Users\\Jonathan\\Desktop\\project bozo\\utils\\bozo-gpt\\src", true)
     // let data =await generateProjectMetadata("./inputs", true)
-    let data =await  generateProjectMetadata("./src", true)
-    fs.writeFileSync("./outputs/output.json", JSON.stringify(data, null, 2));
-    fs.writeFileSync("./outputs/output1.txt", generateOutput("Windows 10 typescript project to summarize code for an ai assistant", [data]));
-
+    // let data =await  generateProjectMetadata("./src", true)
+    // fs.writeFileSync("./outputs/output.json", JSON.stringify(data, null, 2));
+    // fs.writeFileSync("./outputs/output1.txt", generateOutput("Windows 10 typescript project to summarize code for an ai assistant", [data]));
+    await createEmbedding("./inputs/bgae.html")
 
 }
 main();
