@@ -1,0 +1,43 @@
+# Code Summarizer
+
+```
+USER: what does this do?
+
+Windows 10 typescript project to summarize code for an ai assistant
+src/
+  index.ts // This TypeScript file performs the following actions:1. Imports the necessary modules: `fs` for file system operations and `dotenv` for loading environment variables.2. Imports the functions `generateProjectMetadata` and `createCompletion` from the `MetadataGenerator` and `openAIService` files respectively.3. Configures the environment variables using `dotenv.config()`.4. Defines a function `generateOutput` that takes a `specs` string and an array of `DirectoryTree` objects as input and returns a string by concatenating the `specs` string and the indented text generated from the `DirectoryTree`.5. Defines a function `generateIndentedText` that recursively generates indented text from a `DirectoryTree` object. It appends the name, type, and description (if available) of each item in the `DirectoryTree`. For files, it also includes information about functions, interfaces, and classes.6. Defines an async `main` function that performs the following
+    function generateOutput(specs: string, tree: DirectoryTree[]): string // This function takes in a string and an array of directory trees and generates an output string by concatenating the string with the indented text representation of the directory trees.
+    function generateIndentedText(tree: DirectoryTree[], indentLevel: number): string // This function takes in an array of directory trees and an optional indent level, and generates an indented text representation of the directory trees.
+    async function main(): Promise<void> // This async function generates project metadata using the 'generateProjectMetadata' function, writes the metadata to an output file, and writes an indented text representation of the directory trees to another output file.
+  MetadataGenerator.ts // This TypeScript file provides functions to generate metadata for a project. - The `generateProjectMetadata` function takes a root path and an optional flag to enhance the metadata. It calls the `readDirectory` function to recursively read the directory structure and retrieve information about files, functions, interfaces, and classes.- The `readDirectory` function reads the contents of a directory, filters out hidden files and the "node_modules" directory, and iterates over the entries. For each entry, it recursively calls `readDirectory` if it's a directory or processes the TypeScript file if it's a file ending with ".ts". It extracts function signatures, interface signatures, and class signatures using the `getSignatures` function. If there are any functions, interfaces, or classes present, it adds them to the directory tree structure.- The `describeGPTFunctions` function uses the "openai/openAIService" library to generate descriptions for each function in a TypeScript file. It reads the file
+    async function generateProjectMetadata(rootPath: string, enhance: boolean): Promise<DirectoryTree> // This function takes a root directory path and an optional boolean flag. It reads the directory recursively, skipping hidden directories and 'node_modules', and returns a DirectoryTree object that represents the directory structure. If the 'enhance' flag is true, it also includes function, interface, and class signatures, as well as a description of each file.
+    async function readDirectory(dirPath: string, enhance: boolean): Promise<DirectoryTree> // This function takes a directory path and a boolean flag. It recursively reads the directory and its subdirectories, skipping hidden directories and 'node_modules'. It returns a DirectoryTree object that represents the directory structure. If the 'enhance' flag is true, it includes function, interface, and class signatures, as well as a description of each file.
+    async function describeGPTFunctions(filePath: string): Promise<Object> // This function takes a file path and uses the 'createCompletion' function from the 'openai/openAIService' module to generate descriptions for each function in the file using OpenAI's GPT model. It returns an object that maps each function name to its description.
+    async function describeGPTFile(filePath: string): Promise<string> // This function takes a file path and uses the 'createCompletion' function from the 'openai/openAIService' module to generate a detailed description of the file using OpenAI's GPT model. It returns the generated description as a string.
+    function wrapCode(code: string): string // This function takes a string of TypeScript code and wraps it in a code block surrounded by triple backticks and the 'ts' language identifier. It returns the wrapped code as a string.
+    async function getSignatures(filePath: string, describeGPT: boolean): Promise<SignatureDetails> // This function takes a file path and an optional boolean flag. It adds the file to the TypeScript project, retrieves function, interface, and class signatures from the source file, and returns a SignatureDetails object containing the signatures. If the 'describeGPT' flag is true, it also retrieves descriptions for each function using the 'describeGPTFunctions' function.
+    interface DirectoryTree {name: string, type: "directory" | "file", path: string, description: string, children: DirectoryTree[], functions: FunctionSignature[], interfaces: InterfaceSignature[], classes: ClassSignature[]}
+    interface Signature {name: string}
+    interface InterfaceSignature {properties: { name: string; type: string; }[]}
+    interface FunctionSignature {parameters: { name: string; type: string; }[], returnType: string, isAsync: boolean, description: string}
+    interface ParameterSignature {type: string}
+    interface MethodSignature {}
+    interface PropertySignature {}
+    interface ClassSignature {methods: MethodSignature[], properties: PropertySignature[], description: string, constructorParameters: ParameterSignature[]}
+    interface SignatureDetails {functions: FunctionSignature[], interfaces: InterfaceSignature[], classes: ClassSignature[]}
+  openai/
+    openAIService.ts // This TypeScript file exports a function called `createCompletion` that uses the OpenAI API to generate a completion for a given message. The function takes in a `message` parameter, which represents the user's input, and optional parameters for `system`, `max_tokens`, and `model`. The `system` parameter represents the role and content of the system message, which is set to "You are a helpful assistant" by default. The `max_tokens` parameter determines the maximum length of the generated completion, set to 1000 tokens by default. The `model` parameter specifies the model to use for generating the completion, with options including "gpt-3.5-turbo", "gpt-3.5-turbo-16k", "gpt-4", and "gpt-4-32k". The default model used is "gpt-3.5-turbo". Inside the function, an OpenAI `ChatCompletion
+      async function createCompletion(message: string, system: string, max_tokens: number, model: string): Promise<ChatCompletionMessage> // This function takes in a message, system prompt, maximum number of tokens, and model as parameters. It uses the OpenAI library to create a chat completion request using the provided parameters. The function then returns the completed message generated by the model.
+```
+
+```
+ASSISTANT: This TypeScript project provides capabilities to generate summary and meta-data for a TypeScript project using AI.
+
+The `index.ts` file, which is the main entry point for the project, imports the necessary modules and defines important functions such as `generateOutput` and `generateIndentedText` which are used to transform the directory tree structure into readable text presentation. Moreover, it defines an asynchronous function `main` that initiates the meta-data generation.
+
+Next, the `MetadataGenerator.ts` file contains functions for generating the project's meta-data. It uses functions such as `generateProjectMetadata` and `readDirectory` to read the project structure, and `getSignatures` to extract details from the TypeScript files. It can also enhance the generated meta-data using OpenAI's GPT model for describing the functions and the overall file (`describeGPTFunctions` and `describeGPTFile` respectively).
+
+Lastly, the `openAIService.ts` file is utilized in the `MetadataGenerator.ts` and contains a function to connect to the OpenAI API to generate detailed descriptions of the TypeScript files and their functions.
+
+In summary, the project provides an AI-powered utility to generate meaningful summarizations and descriptions for TypeScript codebase for better understanding and readability.
+```
